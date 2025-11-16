@@ -577,3 +577,43 @@ The bridge will automatically:
 3. Create bidirectional bridges when matching server-client pairs are detected
 4. Bridge goal requests, feedback, and results between ROS 1 and ROS 2
 
+## Docker Build and Runtime Workflow
+
+The repository contains a `Dockerfile` that produces a minimal ROS1/ROS2 bridge image based on ROS Jazzy with `rmw_zenoh_cpp`. Typical usage looks like this:
+
+### Build
+
+```bash
+docker build --network host \
+  -t ros1_bridge:zenoh \
+  --build-arg ROS1_DISTRO=one \
+  .
+```
+
+The build ARG `ROS1_DISTRO` defaults to `one` (ROS-O). Adjust it if you need a different ROS1 base.
+
+### Run
+
+Launch the bridge in the background (bridging all topics by default):
+
+```bash
+docker run -d --name ros1_bridge \
+  --net=host \
+  -e ROS_MASTER_URI=http://127.0.0.1:11311 \
+  -e ROS_IP=127.0.0.1 \
+  ros1_bridge:zenoh
+```
+
+Pass any additional environment variables (e.g., `ROS_HOSTNAME`, `RMW_ZENOH_CONFIG`) the same way. `--net=host` is convenient when the ROS1 master and zenoh router are on the host machine; adapt as needed for your network.
+
+### Start/Stop Existing Container
+
+```bash
+# Stop the running bridge
+docker stop ros1_bridge
+
+# Restart it later
+docker start ros1_bridge
+```
+
+Use `docker logs -f ros1_bridge` to follow bridge output, and `docker exec -it ros1_bridge /bin/bash` if you need an interactive shell inside the container.
