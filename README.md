@@ -604,6 +604,8 @@ docker run -d --name ros1_bridge \
   ros1_bridge:zenoh
 ```
 
+This assumes a ROS1 `roscore` is already running (outside Docker) on the host, and a zenoh router is reachable locally for `rmw_zenoh_cpp`. To bridge against a remote ROS1 master, just change `ROS_MASTER_URI` (e.g., `http://192.168.0.10:11311`) and set `ROS_IP/ROS_HOSTNAME` accordingly.
+
 Pass any additional environment variables (e.g., `ROS_HOSTNAME`, `RMW_ZENOH_CONFIG`) the same way. `--net=host` is convenient when the ROS1 master and zenoh router are on the host machine; adapt as needed for your network.
 
 ### Start/Stop Existing Container
