@@ -1,0 +1,10 @@
+-
+  ros1_package_name: 'geometry_msgs'
+  ros1_message_name: 'Pose2D'
+  ros2_package_name: 'vision_msgs'
+  ros2_message_name: 'Pose2D'
+  enable_foreign_mappings: true
+  fields_1_to_2:
+    x: 'position.x'
+    y: 'position.y'
+    theta: 'theta'

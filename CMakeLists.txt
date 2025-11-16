@@ -235,6 +235,7 @@ add_library(${PROJECT_NAME} SHARED
   "src/builtin_interfaces_factories.cpp"
   "src/convert_builtin_interfaces.cpp"
   "src/bridge.cpp"
+  "src/vision_msgs_manual_conversions.cpp"
   ${controller_state_adapter_src}
   ${generated_files})
 ament_target_dependencies(${PROJECT_NAME}
@@ -385,7 +386,10 @@ install(
   DIRECTORY resource
   DESTINATION share/${PROJECT_NAME}
 )
+
+ament_index_register_resource("ros1_bridge_foreign_mapping")
 install(
   FILES action_mappings.yaml
+        vision_msgs_mappings.yaml
   DESTINATION share/${PROJECT_NAME}
 )
