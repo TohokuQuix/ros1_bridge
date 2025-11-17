@@ -29,6 +29,7 @@ RUN apt-get update && \
       python3-colcon-common-extensions \
       ros-${ROS1_DISTRO}-ros-base \
       ros-${ROS1_DISTRO}-vision-msgs \
+      ros-${ROS1_DISTRO}-tf2-msgs \
       ros-jazzy-vision-msgs \
       ros-jazzy-example-interfaces \
       ros-jazzy-rmw-zenoh-cpp && \
@@ -68,6 +69,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       ros-${ROS1_DISTRO}-ros-base \
       ros-${ROS1_DISTRO}-vision-msgs \
+      ros-${ROS1_DISTRO}-tf2-msgs \
       ros-jazzy-vision-msgs \
       ros-jazzy-example-interfaces \
       ros-jazzy-rmw-zenoh-cpp && \
@@ -75,6 +77,7 @@ RUN apt-get update && \
 
 COPY --from=builder /opt/ros_ws /opt/ros_ws
 COPY docker/zenoh.json5 /etc/ros/zenoh.json5
+COPY docker/zenoh-router.json5 /etc/ros/zenoh-router.json5
 COPY docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh

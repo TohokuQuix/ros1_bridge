@@ -585,7 +585,7 @@ The repository contains a `Dockerfile` that produces a minimal ROS1/ROS2 bridge 
 
 ```bash
 docker build --network host \
-  -t ros1_bridge:zenoh \
+  -t ros1_bridge:latest \
   --build-arg ROS1_DISTRO=one \
   .
 ```
@@ -594,19 +594,26 @@ The build ARG `ROS1_DISTRO` defaults to `one` (ROS-O). Adjust it if you need a d
 
 ### Run
 
-Launch the bridge in the background (bridging all topics by default):
+Launch the bridge and the bundled zenoh router (bridging all topics by default):
 
 ```bash
 docker run -d --name ros1_bridge \
   --net=host \
   -e ROS_MASTER_URI=http://127.0.0.1:11311 \
   -e ROS_IP=127.0.0.1 \
-  ros1_bridge:zenoh
+  -e ZENOH_ROUTER_LISTEN_ENDPOINTS='["tcp/0.0.0.0:7447"]' \
+  -e ZENOH_ROUTER_CONNECT_ENDPOINTS='["tcp/192.168.0.198:7447"]' \
+  ros1_bridge:latest
 ```
 
-This assumes a ROS1 `roscore` is already running (outside Docker) on the host, and a zenoh router is reachable locally for `rmw_zenoh_cpp`. To bridge against a remote ROS1 master, just change `ROS_MASTER_URI` (e.g., `http://192.168.0.10:11311`) and set `ROS_IP/ROS_HOSTNAME` accordingly.
+This assumes a ROS1 `roscore` is already running (outside Docker) on the host. To bridge against a remote ROS1 master, set `ROS_MASTER_URI` (e.g., `http://192.168.0.10:11311`) and adjust `ROS_IP/ROS_HOSTNAME`. Pass any additional ROS env vars (`ROS_HOSTNAME`, `RMW_ZENOH_CONFIG`, etc.) the same way. `--net=host` is convenient when the ROS1 master and zenoh router are on the host machine; adapt as needed for your network.
 
-Pass any additional environment variables (e.g., `ROS_HOSTNAME`, `RMW_ZENOH_CONFIG`) the same way. `--net=host` is convenient when the ROS1 master and zenoh router are on the host machine; adapt as needed for your network.
+The entrypoint automatically spawns `ros2 run rmw_zenoh_cpp rmw_zenord` unless you opt out. 
+
+Router listen/connect endpoints can be overridden via CLI options or environment variables (e.g. --router-connect '["tcp/192.168.1.10:7447"]' or -e ZENOH_ROUTER_CONNECT_ENDPOINTS='["tcp/192.168.0.198:7447"]' ).
+
+To disable router auto-start because you already have an external router running, append `--router-disable` 
+
 
 ### Start/Stop Existing Container
 
